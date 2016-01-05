@@ -301,7 +301,7 @@ void simulated_annealing_cplex() {
 
 			// Find the weight of lightest trail using this Pi matrix by running CPLEX
 			// providing a lower bound as input to the model
-			wtx = find_cplex(pi, std::max(wt_best, (u16)BF_MIN));
+			wtx = find_cplex(pi, (u16)BF_MIN, wt_best);
 
 			// Check results
 			if (wtx > wt_best) {

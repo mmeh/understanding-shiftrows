@@ -21,7 +21,7 @@ int main() {
 	//~ simulated_annealing();
 
 	//~ n_choose_k();
-	//~ equivalence_bruteforce();
+	equivalence_bruteforce();
     //test_pi();
 
 	//~ brute_force_pi_noperm();
@@ -30,8 +30,8 @@ int main() {
 
 	//~ u8 pi[RHO*ROWS] = {0,1,0,8,0,8,0,4,0,4,0,8,0,8,0,2,0,2,0,8,0,8,0,4,0,4,0,8,0,8,0,1};
 	//~ u8 pi[RHO*ROWS] = {0,1,2,3,4,5,6,7};
-	u8 pi[RHO*ROWS] = {0,1,2,3};
-	printf("%d\n", find_cplex(pi, (u16)BF_MIN));
+	//~ u8 pi[RHO*ROWS] = {0,1,2,3};
+	//~ printf("%d\n", find_cplex(pi, (u16)BF_MIN));
 
 	//~ bruteforceWithMiddleInverse();
 }

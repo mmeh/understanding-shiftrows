@@ -46,7 +46,7 @@ void naive_brute_force_pi() {
 				#endif
 					memcpy(pi, rowPerm, RHO * ROWS * sizeof(u8));
 
-					this_wt = find_cplex(pi,  std::max(best_wt, (u16)BF_MIN));
+					this_wt = find_cplex(pi, (u16)BF_MIN, best_wt);
 					if (this_wt > best_wt) {
 						memcpy(best_pi, pi, RHO * ROWS * sizeof(u8));
 						best_wt = this_wt;
@@ -121,7 +121,7 @@ void brute_force_pi() {
 								do {
 							#endif
 
-									this_wt = find_cplex(pi, std::max(best_wt, (u16)BF_MIN));
+									this_wt = find_cplex(pi, (u16)BF_MIN, best_wt);
 
 									if (this_wt > best_wt) {
 										best_wt = this_wt;
@@ -205,7 +205,7 @@ void brute_force_pi_noperm() {
                         diff_best = diff;
                     #endif
 						// do the call
-						this_wt = find_cplex(pi, std::max(best_wt, (u16)BF_MIN));
+						this_wt = find_cplex(pi, (u16)BF_MIN, best_wt);
 
 						if (this_wt > best_wt) {
 							best_wt = this_wt;
@@ -308,7 +308,7 @@ void n_choose_k() {
 				//~ print_pi(pi); printf("\n");
 
 				// Get lowest trail wt possible with cplex
-				this_wt = find_cplex(pi, std::max(best_wt, (u16)BF_MIN), &pictureTrails);
+				this_wt = find_cplex(pi, (u16)BF_MIN, best_wt, &pictureTrails);
 
 				if (this_wt > best_wt) {
 					best_wt = this_wt;
@@ -378,8 +378,8 @@ void bruteforceWithMiddleInverse() {
 
 				//~ print_pi(pi); 		printf("\n");
 				//~ print_pi(piOther); 	printf("\n\n");
-				piWt = find_cplex(pi, 0);
-				piOtherWt = find_cplex(piOther, 0);
+				piWt = find_cplex(pi, 0, 0);
+				piOtherWt = find_cplex(piOther, 0, 0);
 
 				if (piWt != piOtherWt) {
 					printf("COUNTEREXAMPLE FOUND!\n");
@@ -426,7 +426,7 @@ void test_pi() {
     //    pi[ROWS*i] = 0;
     //}
 
-	this_wt = find_cplex(pi, std::max(best_wt, (u16)BF_MIN), NULL);
+	this_wt = find_cplex(pi, (u16)BF_MIN, best_wt, NULL);
     printf("%d\t%d\t%d\t%d\t%d\t", ROWS, COLS, RHO, ROUNDS, this_wt);
     print_pi(pi); printf(",\n");
 
@@ -487,13 +487,13 @@ void equivalence_bruteforce() {
 				#endif
 
 					// Get lowest trail wt possible with cplex
-					this_wt = find_cplex(pi, std::max(best_wt, (u16)BF_MIN), NULL);
+					this_wt = find_cplex(pi, (u16)BF_MIN, best_wt, NULL);
 
 					//~ if (this_wt == best_wt) {
 						//~ printf("equivalent matrix : ");
 						//~ print_pi(pi); printf("\n");
 					//~ }
-					if (this_wt > best_wt) {
+					if (this_wt >= best_wt) {
 						best_wt = this_wt;
 						memcpy(best_pi, pi, sizeof(pi));
 

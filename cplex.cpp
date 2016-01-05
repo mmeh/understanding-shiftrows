@@ -1,6 +1,9 @@
+#include <ilcplex/ilocplex.h>
+
 #include "cplex.h"
 #include "heu.h"
 #include "helpers.h"
+
 
 // For CPLEX to work
 ILOSTLBEGIN
@@ -9,7 +12,7 @@ ILOSTLBEGIN
 //        CPLEX STUFF        //
 ///////////////////////////////
 
-ILOBARRIERCALLBACK1(MyCallback, IloInt, num) {
+//ILOBARRIERCALLBACK1(MyCallback, IloInt, num) {
 	//~ cout << "Iteration " << getNiterations() << ": ";
 	//~ if ( isFeasible() ) {
 	//~ cout << "Objective = " << getObjValue() << endl;
@@ -18,19 +21,19 @@ ILOBARRIERCALLBACK1(MyCallback, IloInt, num) {
 	//~ }
 	//~ cout << "obj val in callback " << getObjValue() << endl;
 	//~ cout << "supposed to stop when reaching obj(s) <= " << num <<  endl;
-	if (num != 0 && isFeasible() && getObjValue() >= num)
-		abort();
-}
+//	if (num != 0 && isFeasible() && getObjValue() >= num)
+		//abort();
+//}
 
-u16 find_cplex(u8 *pi, u16 wt_best) {
-	return find_cplex(pi, wt_best, NULL);
+u16 find_cplex(u8 *pi, u16 lower_bound, u16 best_wt) {
+	return find_cplex(pi, lower_bound, best_wt, NULL);
 }
 
 /**
  * Interacts with CPLEX by writing a mathematical model
  * using the API and asks it to solve it, returning the objective value
  */
-u16 find_cplex(u8 *pi, u16 wt_best, std::vector<trail> *pictureTrails) {
+u16 find_cplex(u8 *pi, u16 lower_bound, u16 best_wt, std::vector<trail> *pictureTrails) {
     u16 result = 0;
     size_t t,r,c;
     IloEnv env;
@@ -103,7 +106,10 @@ u16 find_cplex(u8 *pi, u16 wt_best, std::vector<trail> *pictureTrails) {
             }
         }
         model.add(IloMinimize(env, weight));
-        model.add(weight >= wt_best);
+        
+        // Add lower bound on objective value if applicable
+        if (lower_bound > 0)
+			model.add(weight >= lower_bound);
         
         //~ weight.end();
 
@@ -125,9 +131,14 @@ u16 find_cplex(u8 *pi, u16 wt_best, std::vector<trail> *pictureTrails) {
 
 		//~ cplex.exportModel("model.lp");		// print model to file
 
+		// Control number of threads
         #if CPLEX_NUM_THREADS > 0
         cplex.setParam(IloCplex::Threads, CPLEX_NUM_THREADS);
         #endif
+        
+        // Set stopping condition if applicable, i.e. if best solution is far is non-zero
+        if (best_wt > 0)
+			cplex.setParam(IloCplex::ObjLLim, best_wt);
 
 		// Silence CPLEX
         cplex.setOut(env.getNullStream());
